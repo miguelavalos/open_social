@@ -62,6 +62,7 @@ function social_event_type_preprocess_node(array &$variables) {
   /* @var \Drupal\node\NodeInterface $node */
   $node = $variables['node'];
   if ($node->getType() === 'event') {
+    $lang_code = \Drupal::service('language_manager')->getCurrentLanguage()->getId();
     $event_type = $node->get('field_event_type');
     $event_type_entities = $event_type->referencedEntities();
     if (count($event_type_entities) === 1) {
@@ -79,6 +80,9 @@ function social_event_type_preprocess_node(array &$variables) {
           'field_event_date_value' => $datetype,
           'event_type_id' => $event->id(),
         ]);
+        if ($event->hasTranslation($lang_code)) {
+          $event = $event->getTranslation($lang_code);
+        }
         $event_type_link = Link::fromTextAndUrl($event->label(), $event_type_url)
           ->toString();
         $variables['event_type'] = $event_type_link;
